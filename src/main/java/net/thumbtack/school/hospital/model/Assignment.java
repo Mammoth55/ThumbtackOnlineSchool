@@ -1,4 +1,4 @@
-package net.thumbtack.school.server.model;
+package net.thumbtack.school.hospital.model;
 
 public interface Assignment {
 
