@@ -2,6 +2,8 @@ package net.thumbtack.school.hospital.dtoResponse;
 
 public class RegisterDoctorDtoResponse {
 
+	// REVU не нужно. Если вернете токен - значит, успешно
+	// а для неудач нужен ErrorDtoResponse - один на все методы
     private boolean isSuccess;
     private String token;
 

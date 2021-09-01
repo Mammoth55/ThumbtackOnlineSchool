@@ -23,9 +23,18 @@ public class TestServer {
         RegisterDoctorDtoRequest request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "qwerty");
         RegisterDoctorDtoResponse response = someExecuteInRegisterDoctor(request);
+        // REVU не используйте deprecated методы
+        // assertTrue(response.isSuccess());
         assertThat(response.isSuccess(), is(true));
         assertThat(response.getToken().length() == UUID.randomUUID().toString().length(), is(true));
         assertThat(response.getToken().contains("-"), is(true));
+        // REVU Вы сейчас проверяете успешность выполнения метода, то есть не закончился ли он с ошибкой
+        // но, например, если там имя попало на место фамилии и наоборот - этого Вы не заметите
+        // а вот теперь не мешало бы все проверить
+        // сделайте в сервере метод getDoctorByToken
+        // пусть вернет все данные доктора (но не пароль!!!)
+        // и тогда можно будет сравнить то, что было задано в RegisterDoctorDtoRequest
+        // и что вернет getDoctorByToken
 
         request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "666000666");

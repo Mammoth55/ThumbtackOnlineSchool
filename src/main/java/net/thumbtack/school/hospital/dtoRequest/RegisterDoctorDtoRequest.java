@@ -1,3 +1,4 @@
+// REVU заглавные буквы в имени пакета не разрешены
 package net.thumbtack.school.hospital.dtoRequest;
 
 public class RegisterDoctorDtoRequest {
