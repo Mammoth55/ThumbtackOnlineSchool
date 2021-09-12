@@ -33,4 +33,8 @@ public class Server {
     public String registerDoctor(String requestJsonString) {
         return doctorService.register(requestJsonString);
     }
+
+    public String getDoctorByToken(String token) {
+        return doctorService.getDoctorByToken(token);
+    }
 }

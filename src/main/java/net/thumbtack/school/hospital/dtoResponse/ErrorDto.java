@@ -1,4 +1,4 @@
-package net.thumbtack.school.hospital.model;
+package net.thumbtack.school.hospital.dtoResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Allocation {
+public class ErrorDto {
 
-    private Doctor doctor;
-    private Patient patient;
-    private Assignment assignment;
+    private String description;
 }

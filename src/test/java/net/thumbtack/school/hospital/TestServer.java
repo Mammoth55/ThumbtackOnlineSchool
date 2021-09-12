@@ -1,56 +1,50 @@
 package net.thumbtack.school.hospital;
 
-import com.google.gson.Gson;
-import net.thumbtack.school.hospital.dtoRequest.RegisterDoctorDtoRequest;
-import net.thumbtack.school.hospital.dtoResponse.RegisterDoctorDtoResponse;
+import net.thumbtack.school.hospital.dtoResponse.ErrorDto;
+import net.thumbtack.school.hospital.dtoResponse.TokenDto;
+import net.thumbtack.school.hospital.dto_request.RegisterDoctorDto;
+import net.thumbtack.school.hospital.model.ErrorCode;
 import org.junit.Test;
-import java.util.UUID;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import java.rmi.ServerException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestServer {
 
-    private static final Gson GSON = new Gson();
-
-    private RegisterDoctorDtoResponse someExecuteInRegisterDoctor(RegisterDoctorDtoRequest request) {
-        String jsonRequest = GSON.toJson(request);
-        String jsonResponse = Server.instance.registerDoctor(jsonRequest);
-        return GSON.fromJson(jsonResponse, RegisterDoctorDtoResponse.class);
-    }
-
     @Test
-    public void testRegisterDoctor() {
-        RegisterDoctorDtoRequest request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
+    public void testRegisterDoctor() throws ServerException {
+        RegisterDoctorDto request = new RegisterDoctorDto("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "qwerty");
-        RegisterDoctorDtoResponse response = someExecuteInRegisterDoctor(request);
-        // REVU не используйте deprecated методы
-        // assertTrue(response.isSuccess());
-        assertThat(response.isSuccess(), is(true));
-        assertThat(response.getToken().length() == UUID.randomUUID().toString().length(), is(true));
-        assertThat(response.getToken().contains("-"), is(true));
-        // REVU Вы сейчас проверяете успешность выполнения метода, то есть не закончился ли он с ошибкой
-        // но, например, если там имя попало на место фамилии и наоборот - этого Вы не заметите
-        // а вот теперь не мешало бы все проверить
-        // сделайте в сервере метод getDoctorByToken
-        // пусть вернет все данные доктора (но не пароль!!!)
-        // и тогда можно будет сравнить то, что было задано в RegisterDoctorDtoRequest
-        // и что вернет getDoctorByToken
+        String response = Server.instance.registerDoctor(Service.GSON.toJson(request));
+        TokenDto tokenDto = Service.getObjectFromJson(response, TokenDto.class);
+        assertTrue(tokenDto.getToken().matches(Service.UUID_PATTERN));
 
-        request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
+        response = Server.instance.getDoctorByToken(tokenDto.getToken());
+        RegisterDoctorDto dto = Service.getObjectFromJson(response, RegisterDoctorDto.class);
+        assertEquals(dto.getFirstName(), request.getFirstName());
+        assertEquals(dto.getLastName(), request.getLastName());
+        assertEquals(dto.getSpeciality(), request.getSpeciality());
+        assertEquals(dto.getLogin(), request.getLogin());
+
+        request = new RegisterDoctorDto("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "666000666");
-        response = someExecuteInRegisterDoctor(request);
-        assertThat(response.isSuccess(), is(false));
-        assertThat(response.getToken(), is("Этот доктор уже зарегистрирован в БД"));
+        response = Server.instance.registerDoctor(Service.GSON.toJson(request));
+        ErrorDto errorDto = Service.getObjectFromJson(response, ErrorDto.class);
+        assertEquals(errorDto.getDescription(), ErrorCode.USER_ALREADY_EXIST);
 
-        request = new RegisterDoctorDtoRequest();
-        response = someExecuteInRegisterDoctor(request);
-        assertThat(response.isSuccess(), is(false));
-        assertThat(response.getToken(), is("Некорректные данные в запросе"));
+        request = new RegisterDoctorDto();
+        response = Server.instance.registerDoctor(Service.GSON.toJson(request));
+        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
+        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_REQUEST);
 
-        request = new RegisterDoctorDtoRequest("0 ", " 0", " ",
+        request = new RegisterDoctorDto("0 ", " 0", " ",
                 " 0 ", "0");
-        response = someExecuteInRegisterDoctor(request);
-        assertThat(response.isSuccess(), is(false));
-        assertThat(response.getToken(), is("Некорректные данные в запросе"));
+        response = Server.instance.registerDoctor(Service.GSON.toJson(request));
+        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
+        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_REQUEST);
+
+        response = Server.instance.registerDoctor("");
+        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
+        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_JSON);
     }
 }

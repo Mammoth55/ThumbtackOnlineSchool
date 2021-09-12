@@ -1,38 +1,26 @@
 package net.thumbtack.school.hospital.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Medicament implements Assignment {
 
     private String name;
     private int dailyUse;
-
-    public Medicament() {
-    }
-
-    public Medicament(String name, int dailyUse) {
-        this.name = name;
-        this.dailyUse = dailyUse;
-    }
 
     @Override
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getDailyUse() {
-        return dailyUse;
-    }
-
-    public void setDailyUse(int dailyUse) {
-        this.dailyUse = dailyUse;
-    }
-
     @Override
     public boolean use() {
-
         return true;
     }
 }

@@ -1,6 +1,6 @@
 package net.thumbtack.school.hospital.model;
 
-public enum Week {
+public enum WeekDays {
     MONDAY,
     TUESDAY,
     WEDNESDAY,

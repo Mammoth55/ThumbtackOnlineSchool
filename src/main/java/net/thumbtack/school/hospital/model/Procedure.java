@@ -1,18 +1,22 @@
 package net.thumbtack.school.hospital.model;
 
+import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Procedure implements Assignment {
 
     private String name;
-    private List<Week> daysOfUse;
+    private List<WeekDays> daysOfUse;
 
-    public Procedure() {
-    }
-
-    public Procedure(String name, List<Week> daysOfUse) {
+    public Procedure(String name) {
         this.name = name;
-        this.daysOfUse = daysOfUse;
+        this.daysOfUse = new ArrayList<>();
     }
 
     @Override
@@ -20,21 +24,8 @@ public class Procedure implements Assignment {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Week> getDaysOfUse() {
-        return daysOfUse;
-    }
-
-    public void setDaysOfUse(List<Week> daysOfUse) {
-        this.daysOfUse = daysOfUse;
-    }
-
     @Override
     public boolean use() {
-
         return true;
     }
 }

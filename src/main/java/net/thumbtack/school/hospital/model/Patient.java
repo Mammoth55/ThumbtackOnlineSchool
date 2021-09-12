@@ -2,41 +2,24 @@ package net.thumbtack.school.hospital.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Patient extends User {
 
     private String disease;
     private Doctor doctor;
     private List<Allocation> allocations;
 
-    public Patient() {
-    }
-
     public Patient(String lastName, String firstName, String login, String password, String disease, Doctor doctor) {
         super(lastName, firstName, login, password);
         this.disease = disease;
         this.doctor = doctor;
         this.allocations = new ArrayList<>();
-    }
-
-    public String getDisease() {
-        return disease;
-    }
-
-    public void setDisease(String disease) {
-        this.disease = disease;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public List<Allocation> getAllocations() {
-        return allocations;
     }
 
     @Override
