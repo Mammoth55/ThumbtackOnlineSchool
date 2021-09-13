@@ -26,6 +26,11 @@ public class DoctorService {
             token = UUID.randomUUID().toString();
             doctorDao.insertDoctor(doctor, token);
         } catch (ServerException e) {
+        	// REVU зачем Вам понадобилось заимствовать у другого сервиса его статическое поле ?
+        	// чтобы все усложнить ? :-)
+        	// заведите здесь свое поле типа Gson
+            // return Service.GSON.toJson(new ErrorDto(e));
+        	// и пусть конструктор разбирается
             return Service.GSON.toJson(new ErrorDto(e.getMessage()));
         }
         return Service.GSON.toJson(new TokenDto(token));
@@ -34,6 +39,7 @@ public class DoctorService {
     public String getDoctorByToken(String token) {
         if (token == null || ! token.matches(Service.UUID_PATTERN))
             return Service.GSON.toJson(new ErrorDto(ErrorCode.WRONG_TOKEN));
+        // REVU не нужна, просто return внутри try
         Doctor doctor;
         try {
             doctor = doctorDao.getDoctorByToken(token);

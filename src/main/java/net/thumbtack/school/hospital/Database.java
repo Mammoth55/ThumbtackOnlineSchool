@@ -1,3 +1,4 @@
+// REVU перенесите в net.thumbtack.school.hospital.database
 package net.thumbtack.school.hospital;
 
 import net.thumbtack.school.hospital.model.Allocation;

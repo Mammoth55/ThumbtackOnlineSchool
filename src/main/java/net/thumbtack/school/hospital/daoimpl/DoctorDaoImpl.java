@@ -13,7 +13,13 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public void insertDoctor(Doctor doctor, String token) throws ServerException {
+    	// REVU ничего тут делать не надо, просто
+    	// database.inserDoctor(doctor, token)
+    	// а этот код туда
+    	// DAO только переносчик данных, а добавление/изменение/удаление - дело самой БД
         boolean result = database.getUsers().putIfAbsent(doctor.getLogin(), doctor) == null;
+        // REVU if(!result) { throw...}
+        // и else не понадобится
         if (result) {
             database.getTokens().put(token, doctor);
         } else {
@@ -23,7 +29,10 @@ public class DoctorDaoImpl implements DoctorDao {
 
     @Override
     public Doctor getDoctorByToken(String token) throws ServerException {
-        if (token == null) throw new ServerException(ErrorCode.WRONG_TOKEN);
+    	// return database.getDoctorByToken(token);
+        // REVU а вот эта проверка не нужна. Сервис должен был провалидировать DTO request и ели там null - не запрашивать вообще
+    	// и это у Вас в нем есть
+    	if (token == null) throw new ServerException(ErrorCode.WRONG_TOKEN);
         User user = database.getTokens().get(token);
         if (user == null) throw new ServerException(ErrorCode.WRONG_TOKEN);
         if (! (user instanceof Doctor)) throw new ServerException(ErrorCode.ANOTHER_TOKEN);

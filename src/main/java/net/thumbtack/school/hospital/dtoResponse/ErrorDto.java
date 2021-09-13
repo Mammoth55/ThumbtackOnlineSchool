@@ -1,3 +1,4 @@
+// REVU никаких заглавных букв в имеи пакета
 package net.thumbtack.school.hospital.dtoResponse;
 
 import lombok.AllArgsConstructor;

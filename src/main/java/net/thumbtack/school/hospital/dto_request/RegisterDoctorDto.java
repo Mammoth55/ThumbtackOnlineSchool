@@ -22,7 +22,18 @@ public class RegisterDoctorDto {
     private String login;
     private String password;
 
+    // REVU лучше это в сервис и там private static
+    // сервису лучше знать, как валидировать
     public void validate() throws ServerException {
+    	// REVU трудно читается
+    	// if (this.lastName == null || !this.lastName.isBlank() || this.lastName.matches(NAME_PATTERN) {
+        // throw new ServerException(ErrorCode.WRONG_LASTNAME);
+    	// }
+    	// и т.д. аналогично
+    	// кстати, посмотрите
+    	// https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html
+    	
+ 
         if (this.lastName != null && !this.lastName.isBlank() && this.lastName.matches(NAME_PATTERN)
                 && this.firstName != null && !this.firstName.isBlank() && this.firstName.matches(NAME_PATTERN)
                 && this.speciality != null && !this.speciality.isBlank() && this.speciality.matches(NAME_PATTERN)

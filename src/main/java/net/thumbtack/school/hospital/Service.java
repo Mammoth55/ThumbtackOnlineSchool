@@ -9,6 +9,7 @@ import java.rmi.ServerException;
  */
 public class Service {
 
+	// REVU private оба
     public static final Gson GSON = new Gson();
     public static final String UUID_PATTERN = "\\w{8}-(\\w{4}-){3}\\w{12}";
 
@@ -16,6 +17,7 @@ public class Service {
     public static <T> T getObjectFromJson(String requestJsonString, Class<T> classOfT) throws ServerException {
         if (requestJsonString == null || requestJsonString.trim().isBlank())
             throw new ServerException(ErrorCode.WRONG_JSON);
+        // REVU не нужна, просто return внутри try
         T t;
         try {
             t = GSON.fromJson(requestJsonString, classOfT);
