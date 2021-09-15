@@ -1,12 +1,14 @@
 package net.thumbtack.school.hospital;
 
 import com.google.gson.Gson;
+import net.thumbtack.school.hospital.dtorequest.RegisterDoctorDto;
 import net.thumbtack.school.hospital.dtoresponse.ErrorDto;
 import net.thumbtack.school.hospital.dtoresponse.TokenDto;
-import net.thumbtack.school.hospital.dtorequest.RegisterDoctorDto;
 import net.thumbtack.school.hospital.model.ErrorCode;
 import org.junit.Test;
+
 import java.rmi.ServerException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -41,26 +43,26 @@ public class TestServer {
         errorDto = Service.getObjectFromJson(response, ErrorDto.class);
         assertEquals(errorDto.getDescription(), ErrorCode.WRONG_LASTNAME);
 
-        request = new RegisterDoctorDto("0", " 0", " ",
+        request = new RegisterDoctorDto("0", "\t", " ",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDto = Service.getObjectFromJson(response, ErrorDto.class);
         assertEquals(errorDto.getDescription(), ErrorCode.WRONG_FIRSTNAME);
 
-        request = new RegisterDoctorDto("0", "0", " ",
+        request = new RegisterDoctorDto("0", "0", "",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDto = Service.getObjectFromJson(response, ErrorDto.class);
         assertEquals(errorDto.getDescription(), ErrorCode.WRONG_SPECIALITY);
 
         request = new RegisterDoctorDto("0", "0", "0",
-                " 0 ", "0");
+                "\r", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDto = Service.getObjectFromJson(response, ErrorDto.class);
         assertEquals(errorDto.getDescription(), ErrorCode.WRONG_LOGIN);
 
         request = new RegisterDoctorDto("0", "0", "0",
-                "0@0.0", "0 0");
+                "0@0.0", "\n");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDto = Service.getObjectFromJson(response, ErrorDto.class);
         assertEquals(errorDto.getDescription(), ErrorCode.WRONG_PASSWORD);

@@ -27,8 +27,10 @@ public class Patient extends User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Patient patient = (Patient) o;
-        return disease.equals(patient.disease) && getLastName().equals(patient.getLastName())
-                && getFirstName().equals(patient.getFirstName()) && getLogin().equals(patient.getLogin())
+        return disease.equals(patient.disease)
+                && getLastName().equals(patient.getLastName())
+                && getFirstName().equals(patient.getFirstName())
+                && getLogin().equals(patient.getLogin())
                 && getPassword().equals(patient.getPassword());
     }
 }

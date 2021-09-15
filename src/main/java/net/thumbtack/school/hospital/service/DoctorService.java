@@ -10,9 +10,10 @@ import net.thumbtack.school.hospital.dtoresponse.TokenDto;
 import net.thumbtack.school.hospital.mappers.DoctorMapper;
 import net.thumbtack.school.hospital.model.Doctor;
 import net.thumbtack.school.hospital.model.ErrorCode;
+
 import java.rmi.ServerException;
 import java.util.UUID;
-import static org.apache.commons.lang3.StringUtils.isAlphanumeric;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class DoctorService {
@@ -24,45 +25,46 @@ public class DoctorService {
     private final DoctorDao doctorDao = new DoctorDaoImpl();
 
     public static void validate(RegisterDoctorDto dto) throws ServerException {
-        if (dto == null) throw new ServerException(ErrorCode.WRONG_REQUEST);
-        // REVU вот такое я бы не решился делать - isAlphanumeric
-        // Как быть с Петровым-Водкиным ?
-        // Не надо. Непустое имя - и все.
-        if (isBlank(dto.getLastName()) || ! isAlphanumeric(dto.getLastName()))
+        if (dto == null) {
+            throw new ServerException(ErrorCode.WRONG_REQUEST);
+        }
+        if (isBlank(dto.getLastName())) {
             throw new ServerException(ErrorCode.WRONG_LASTNAME);
-        if (isBlank(dto.getFirstName()) || ! isAlphanumeric(dto.getFirstName()))
+        }
+        if (isBlank(dto.getFirstName())) {
             throw new ServerException(ErrorCode.WRONG_FIRSTNAME);
-        if (isBlank(dto.getSpeciality()) || ! isAlphanumeric(dto.getSpeciality()))
+        }
+        if (isBlank(dto.getSpeciality())) {
             throw new ServerException(ErrorCode.WRONG_SPECIALITY);
-        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(MAIL_PATTERN))
+        }
+        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(MAIL_PATTERN)) {
             throw new ServerException(ErrorCode.WRONG_LOGIN);
-        if (isBlank(dto.getPassword()) || ! isAlphanumeric(dto.getPassword()))
-        throw new ServerException(ErrorCode.WRONG_PASSWORD);
+        }
+        if (isBlank(dto.getPassword())) {
+            throw new ServerException(ErrorCode.WRONG_PASSWORD);
+        }
     }
 
     public String register(String requestJsonString) {
-    	// REVU описывайте переменные там, где они нужны, то есть внутри try
-    	// там же и return в конце
-        RegisterDoctorDto registerDoctorDto;
-        String token;
         try {
+            RegisterDoctorDto registerDoctorDto;
+            String token;
             registerDoctorDto = Service.getObjectFromJson(requestJsonString, RegisterDoctorDto.class);
             validate(registerDoctorDto);
             Doctor doctor = DoctorMapper.DOCTOR_MAPPER.toDoctor(registerDoctorDto);
             token = UUID.randomUUID().toString();
             doctorDao.insertDoctor(doctor, token);
+            return GSON.toJson(new TokenDto(token));
         } catch (ServerException e) {
             return GSON.toJson(new ErrorDto(e));
         }
-        return GSON.toJson(new TokenDto(token));
     }
 
     public String getDoctorByToken(String token) {
-        if (token == null || !token.matches(UUID_PATTERN)) 
-        	// { throw new ServerException(ErrorCode.WRONG_TOKEN))
-        	// и все это под try. Блок catch его и поймает
-            return GSON.toJson(new ErrorDto(new ServerException(ErrorCode.WRONG_TOKEN)));
         try {
+            if (token == null || !token.matches(UUID_PATTERN)) {
+                throw new ServerException(ErrorCode.WRONG_TOKEN);
+            }
             return GSON.toJson(DoctorMapper.DOCTOR_MAPPER.fromDoctor(doctorDao.getDoctorByToken(token)));
         } catch (ServerException e) {
             return GSON.toJson(new ErrorDto(e));

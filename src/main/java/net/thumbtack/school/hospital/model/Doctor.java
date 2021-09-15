@@ -3,6 +3,7 @@ package net.thumbtack.school.hospital.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,10 @@ public class Doctor extends User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Doctor doctor = (Doctor) o;
-        return speciality.equals(doctor.speciality) && getLastName().equals(doctor.getLastName())
-                && getFirstName().equals(doctor.getFirstName()) && getLogin().equals(doctor.getLogin())
+        return speciality.equals(doctor.speciality)
+                && getLastName().equals(doctor.getLastName())
+                && getFirstName().equals(doctor.getFirstName())
+                && getLogin().equals(doctor.getLogin())
                 && getPassword().equals(doctor.getPassword());
     }
 }
