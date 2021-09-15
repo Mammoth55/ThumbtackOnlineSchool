@@ -25,6 +25,9 @@ public class DoctorService {
 
     public static void validate(RegisterDoctorDto dto) throws ServerException {
         if (dto == null) throw new ServerException(ErrorCode.WRONG_REQUEST);
+        // REVU вот такое я бы не решился делать - isAlphanumeric
+        // Как быть с Петровым-Водкиным ?
+        // Не надо. Непустое имя - и все.
         if (isBlank(dto.getLastName()) || ! isAlphanumeric(dto.getLastName()))
             throw new ServerException(ErrorCode.WRONG_LASTNAME);
         if (isBlank(dto.getFirstName()) || ! isAlphanumeric(dto.getFirstName()))
@@ -38,6 +41,8 @@ public class DoctorService {
     }
 
     public String register(String requestJsonString) {
+    	// REVU описывайте переменные там, где они нужны, то есть внутри try
+    	// там же и return в конце
         RegisterDoctorDto registerDoctorDto;
         String token;
         try {
@@ -53,7 +58,9 @@ public class DoctorService {
     }
 
     public String getDoctorByToken(String token) {
-        if (token == null || !token.matches(UUID_PATTERN))
+        if (token == null || !token.matches(UUID_PATTERN)) 
+        	// { throw new ServerException(ErrorCode.WRONG_TOKEN))
+        	// и все это под try. Блок catch его и поймает
             return GSON.toJson(new ErrorDto(new ServerException(ErrorCode.WRONG_TOKEN)));
         try {
             return GSON.toJson(DoctorMapper.DOCTOR_MAPPER.fromDoctor(doctorDao.getDoctorByToken(token)));

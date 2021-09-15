@@ -24,7 +24,9 @@ public class Database {
     }
 
     public void insertDoctor(Doctor doctor, String token) throws ServerException {
+    	// REVU isNotSaved не нужна
         boolean isNotSaved = users.putIfAbsent(doctor.getLogin(), doctor) != null;
+        // REVU после if, else, for всегда {}
         if (isNotSaved) throw new ServerException(ErrorCode.USER_ALREADY_EXIST);
         tokens.put(token, doctor);
     }
