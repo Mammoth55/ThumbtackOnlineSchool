@@ -9,7 +9,7 @@ import java.rmi.ServerException;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /*
-    Утилитарный класс, для повторяющихся методов и констант
+    Утилитарный класс, для повторяющихся методов
  */
 public class Service {
 

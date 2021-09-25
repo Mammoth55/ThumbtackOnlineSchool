@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import net.thumbtack.school.hospital.Service;
 import net.thumbtack.school.hospital.dao.DoctorDao;
 import net.thumbtack.school.hospital.daoimpl.DoctorDaoImpl;
-import net.thumbtack.school.hospital.dtorequest.RegisterDoctorDto;
-import net.thumbtack.school.hospital.dtoresponse.ErrorDto;
-import net.thumbtack.school.hospital.dtoresponse.TokenDto;
-import net.thumbtack.school.hospital.mappers.DoctorMapper;
+import net.thumbtack.school.hospital.dto.request.LoginUserDtoRequest;
+import net.thumbtack.school.hospital.dto.request.RegisterDoctorDtoRequest;
+import net.thumbtack.school.hospital.dto.response.ErrorDtoResponse;
+import net.thumbtack.school.hospital.dto.response.TokenDto;
+import net.thumbtack.school.hospital.mapper.DoctorMapperFromRegister;
 import net.thumbtack.school.hospital.model.Doctor;
 import net.thumbtack.school.hospital.model.ErrorCode;
 
@@ -20,11 +21,11 @@ public class DoctorService {
 
     private static final Gson GSON = new Gson();
     private static final String UUID_PATTERN = "\\w{8}-(\\w{4}-){3}\\w{12}";
-    private static final String MAIL_PATTERN = "[а-яёА-ЯЁa-zA-Z0-9@\\.]+";
+    private static final String LOGIN_PATTERN = "[а-яёА-ЯЁa-zA-Z0-9@\\.]+";
 
     private final DoctorDao doctorDao = new DoctorDaoImpl();
 
-    public static void validate(RegisterDoctorDto dto) throws ServerException {
+    public static void validateRegisterDoctorDtoRequest(RegisterDoctorDtoRequest dto) throws ServerException {
         if (dto == null) {
             throw new ServerException(ErrorCode.WRONG_REQUEST);
         }
@@ -37,7 +38,7 @@ public class DoctorService {
         if (isBlank(dto.getSpeciality())) {
             throw new ServerException(ErrorCode.WRONG_SPECIALITY);
         }
-        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(MAIL_PATTERN)) {
+        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(LOGIN_PATTERN)) {
             throw new ServerException(ErrorCode.WRONG_LOGIN);
         }
         if (isBlank(dto.getPassword())) {
@@ -47,16 +48,14 @@ public class DoctorService {
 
     public String register(String requestJsonString) {
         try {
-            RegisterDoctorDto registerDoctorDto;
-            String token;
-            registerDoctorDto = Service.getObjectFromJson(requestJsonString, RegisterDoctorDto.class);
-            validate(registerDoctorDto);
-            Doctor doctor = DoctorMapper.DOCTOR_MAPPER.toDoctor(registerDoctorDto);
-            token = UUID.randomUUID().toString();
+            RegisterDoctorDtoRequest registerDoctorDtoRequest = Service.getObjectFromJson(requestJsonString, RegisterDoctorDtoRequest.class);
+            validateRegisterDoctorDtoRequest(registerDoctorDtoRequest);
+            Doctor doctor = DoctorMapperFromRegister.MAPPER.toDoctor(registerDoctorDtoRequest);
+            String token = UUID.randomUUID().toString();
             doctorDao.insertDoctor(doctor, token);
             return GSON.toJson(new TokenDto(token));
         } catch (ServerException e) {
-            return GSON.toJson(new ErrorDto(e));
+            return GSON.toJson(new ErrorDtoResponse(e));
         }
     }
 
@@ -65,9 +64,47 @@ public class DoctorService {
             if (token == null || !token.matches(UUID_PATTERN)) {
                 throw new ServerException(ErrorCode.WRONG_TOKEN);
             }
-            return GSON.toJson(DoctorMapper.DOCTOR_MAPPER.fromDoctor(doctorDao.getDoctorByToken(token)));
+            return GSON.toJson(DoctorMapperFromRegister.MAPPER.fromDoctor(doctorDao.getDoctorByToken(token)));
         } catch (ServerException e) {
-            return GSON.toJson(new ErrorDto(e));
+            return GSON.toJson(new ErrorDtoResponse(e));
+        }
+    }
+
+    public static void validateLoginUserDtoRequest(LoginUserDtoRequest dto) throws ServerException {
+        if (dto == null) {
+            throw new ServerException(ErrorCode.WRONG_REQUEST);
+        }
+        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(LOGIN_PATTERN)) {
+            throw new ServerException(ErrorCode.WRONG_LOGIN);
+        }
+        if (isBlank(dto.getPassword())) {
+            throw new ServerException(ErrorCode.WRONG_PASSWORD);
+        }
+    }
+
+    public String login(String requestJsonString) {
+        try {
+            LoginUserDtoRequest loginUserDtoRequest = Service.getObjectFromJson(requestJsonString, LoginUserDtoRequest.class);
+            validateLoginUserDtoRequest(loginUserDtoRequest);
+            String token = UUID.randomUUID().toString();
+            doctorDao.login(loginUserDtoRequest.getLogin(), token);
+            return GSON.toJson(new TokenDto(token));
+        } catch (ServerException e) {
+            return GSON.toJson(new ErrorDtoResponse(e));
+        }
+    }
+
+    public String logout(String requestJsonString) {
+        try {
+            TokenDto tokenDto = Service.getObjectFromJson(requestJsonString, TokenDto.class);
+            String token = tokenDto.getToken();
+            if (token == null || !token.matches(UUID_PATTERN)) {
+                throw new ServerException(ErrorCode.WRONG_TOKEN);
+            }
+            doctorDao.logout(token);
+            return GSON.toJson(new TokenDto(token));
+        } catch (ServerException e) {
+            return GSON.toJson(new ErrorDtoResponse(e));
         }
     }
 }

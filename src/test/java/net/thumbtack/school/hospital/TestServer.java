@@ -1,13 +1,15 @@
 package net.thumbtack.school.hospital;
 
 import com.google.gson.Gson;
-import net.thumbtack.school.hospital.dtorequest.RegisterDoctorDto;
-import net.thumbtack.school.hospital.dtoresponse.ErrorDto;
-import net.thumbtack.school.hospital.dtoresponse.TokenDto;
+import net.thumbtack.school.hospital.dto.request.LoginUserDtoRequest;
+import net.thumbtack.school.hospital.dto.request.RegisterDoctorDtoRequest;
+import net.thumbtack.school.hospital.dto.response.ErrorDtoResponse;
+import net.thumbtack.school.hospital.dto.response.TokenDto;
 import net.thumbtack.school.hospital.model.ErrorCode;
 import org.junit.Test;
 
 import java.rmi.ServerException;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -19,56 +21,79 @@ public class TestServer {
 
     @Test
     public void testRegisterDoctor() throws ServerException {
-        RegisterDoctorDto request = new RegisterDoctorDto("Чен", "Ли", "Хирург",
+        RegisterDoctorDtoRequest request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "qwerty");
         String response = Server.instance.registerDoctor(GSON.toJson(request));
         TokenDto tokenDto = Service.getObjectFromJson(response, TokenDto.class);
         assertTrue(tokenDto.getToken().matches(UUID_PATTERN));
 
         response = Server.instance.getDoctorByToken(tokenDto.getToken());
-        RegisterDoctorDto dto = Service.getObjectFromJson(response, RegisterDoctorDto.class);
+        RegisterDoctorDtoRequest dto = Service.getObjectFromJson(response, RegisterDoctorDtoRequest.class);
         assertEquals(dto.getFirstName(), request.getFirstName());
         assertEquals(dto.getLastName(), request.getLastName());
         assertEquals(dto.getSpeciality(), request.getSpeciality());
         assertEquals(dto.getLogin(), request.getLogin());
 
-        request = new RegisterDoctorDto("Чен", "Ли", "Хирург",
+        request = new RegisterDoctorDtoRequest("Чен", "Ли", "Хирург",
                 "LI666@gmail.com", "666000666");
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        ErrorDto errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.USER_ALREADY_EXIST);
+        ErrorDtoResponse errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.USER_ALREADY_EXIST);
 
-        request = new RegisterDoctorDto();
+        request = new RegisterDoctorDtoRequest();
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_LASTNAME);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LASTNAME);
 
-        request = new RegisterDoctorDto("0", "\t", " ",
+        request = new RegisterDoctorDtoRequest("0", "\t", " ",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_FIRSTNAME);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_FIRSTNAME);
 
-        request = new RegisterDoctorDto("0", "0", "",
+        request = new RegisterDoctorDtoRequest("0", "0", "",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_SPECIALITY);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_SPECIALITY);
 
-        request = new RegisterDoctorDto("0", "0", "0",
+        request = new RegisterDoctorDtoRequest("0", "0", "0",
                 "\r", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_LOGIN);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LOGIN);
 
-        request = new RegisterDoctorDto("0", "0", "0",
+        request = new RegisterDoctorDtoRequest("0", "0", "0",
                 "0@0.0", "\n");
         response = Server.instance.registerDoctor(GSON.toJson(request));
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_PASSWORD);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_PASSWORD);
 
         response = Server.instance.registerDoctor("");
-        errorDto = Service.getObjectFromJson(response, ErrorDto.class);
-        assertEquals(errorDto.getDescription(), ErrorCode.WRONG_JSON);
+        errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_JSON);
+    }
+
+    @Test
+    public void testLoginUser() throws ServerException {
+        RegisterDoctorDtoRequest registerDoctorDtoRequest = new RegisterDoctorDtoRequest("Лонг", "Ма", "Педиатр",
+                "MA.666@gmail.com", "654321");
+        String response = Server.instance.registerDoctor(GSON.toJson(registerDoctorDtoRequest));
+
+        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(null))),
+                GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.WRONG_TOKEN))));
+        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(""))),
+                GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.WRONG_TOKEN))));
+        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(UUID.randomUUID().toString()))),
+                GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.SESSION_NOT_FOUND))));
+        assertEquals(Server.instance.logoutDoctor(response), response);
+
+        assertEquals(Server.instance.logoutDoctor(response),
+                GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.SESSION_NOT_FOUND))));
+
+        LoginUserDtoRequest request = new LoginUserDtoRequest("MA.666@gmail.com", "654321");
+        response = Server.instance.loginDoctor(GSON.toJson(request));
+        TokenDto tokenDto = Service.getObjectFromJson(response, TokenDto.class);
+        assertTrue(tokenDto.getToken().matches(UUID_PATTERN));
     }
 }

@@ -1,4 +1,4 @@
-package net.thumbtack.school.hospital.dtoresponse;
+package net.thumbtack.school.hospital.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

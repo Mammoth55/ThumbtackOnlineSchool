@@ -1,4 +1,4 @@
-package net.thumbtack.school.hospital.dtoresponse;
+package net.thumbtack.school.hospital.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ErrorDto {
+public class ErrorDtoResponse {
 
     private String description;
 
-    public ErrorDto(Exception e) {
+    public ErrorDtoResponse(Exception e) {
         this.description = e.getMessage();
     }
 }

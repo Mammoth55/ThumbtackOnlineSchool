@@ -1,4 +1,4 @@
-package net.thumbtack.school.hospital.dtorequest;
+package net.thumbtack.school.hospital.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDoctorDto {
+public class LoginUserDtoRequest {
 
-    private String lastName;
-    private String firstName;
-    private String speciality;
     private String login;
     private String password;
 }

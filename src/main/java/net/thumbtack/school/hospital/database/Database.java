@@ -1,10 +1,7 @@
 package net.thumbtack.school.hospital.database;
 
 import lombok.Getter;
-import net.thumbtack.school.hospital.model.Allocation;
-import net.thumbtack.school.hospital.model.Doctor;
-import net.thumbtack.school.hospital.model.ErrorCode;
-import net.thumbtack.school.hospital.model.User;
+import net.thumbtack.school.hospital.model.*;
 
 import java.rmi.ServerException;
 import java.util.HashMap;
@@ -36,10 +33,27 @@ public class Database {
         if (user == null) {
             throw new ServerException(ErrorCode.WRONG_TOKEN);
         }
-        if (!(user instanceof Doctor)) {
+        if (! (user instanceof Doctor)) {
             throw new ServerException(ErrorCode.ACCESS_RIGHTS_MISMATCH);
         }
         user.setPassword("");
         return (Doctor) user;
+    }
+
+    public void loginDoctor(String login, String token) throws ServerException {
+        User user = users.get(login);
+        if (user == null) {
+            throw new ServerException(ErrorCode.USER_NOT_FOUND);
+        }
+        if (! (user instanceof Doctor)) {
+            throw new ServerException(ErrorCode.ACCESS_RIGHTS_MISMATCH);
+        }
+        tokens.put(token, user);
+    }
+
+    public void logoutDoctor(String token) throws ServerException {
+        if (tokens.remove(token) == null) {
+            throw new ServerException(ErrorCode.SESSION_NOT_FOUND);
+        }
     }
 }
