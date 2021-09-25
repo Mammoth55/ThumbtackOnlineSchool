@@ -2,6 +2,7 @@ package net.thumbtack.school.hospital;
 
 import net.thumbtack.school.hospital.service.DoctorService;
 import net.thumbtack.school.hospital.service.PatientService;
+import net.thumbtack.school.hospital.service.UserService;
 
 public class Server {
 
@@ -9,6 +10,7 @@ public class Server {
     private static final String DATABASE_FILE = "src/main/resources/data_file.txt";
 
     private final DoctorService doctorService = new DoctorService();
+    private final UserService userService = new UserService();
     private final PatientService patientService = new PatientService();
 
     private Server() {
@@ -34,11 +36,11 @@ public class Server {
         return doctorService.getDoctorByToken(token);
     }
 
-    public String loginDoctor(String requestJsonString) {
-        return doctorService.login(requestJsonString);
+    public String loginUser(String requestJsonString) {
+        return userService.login(requestJsonString);
     }
 
-    public String logoutDoctor(String requestJsonString) {
-        return doctorService.logout(requestJsonString);
+    public String logoutUser(String requestJsonString) {
+        return userService.logout(requestJsonString);
     }
 }

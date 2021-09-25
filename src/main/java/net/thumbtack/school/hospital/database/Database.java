@@ -40,18 +40,18 @@ public class Database {
         return (Doctor) user;
     }
 
-    public void loginDoctor(String login, String token) throws ServerException {
-        User user = users.get(login);
-        if (user == null) {
+    public void login(User user, String token) throws ServerException {
+        User userFromDB = users.get(user.getLogin());
+        if (userFromDB == null) {
             throw new ServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if (! (user instanceof Doctor)) {
-            throw new ServerException(ErrorCode.ACCESS_RIGHTS_MISMATCH);
+        if (! userFromDB.getPassword().equals(user.getPassword())) {
+            throw new ServerException(ErrorCode.WRONG_PASSWORD);
         }
-        tokens.put(token, user);
+        tokens.put(token, userFromDB);
     }
 
-    public void logoutDoctor(String token) throws ServerException {
+    public void logout(String token) throws ServerException {
         if (tokens.remove(token) == null) {
             throw new ServerException(ErrorCode.SESSION_NOT_FOUND);
         }

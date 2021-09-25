@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User {
+public class User {
 
     private String lastName;
     private String firstName;

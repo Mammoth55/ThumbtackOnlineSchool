@@ -80,19 +80,23 @@ public class TestServer {
                 "MA.666@gmail.com", "654321");
         String response = Server.instance.registerDoctor(GSON.toJson(registerDoctorDtoRequest));
 
-        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(null))),
+        assertEquals(Server.instance.logoutUser(GSON.toJson(new TokenDto(null))),
                 GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.WRONG_TOKEN))));
-        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(""))),
+        assertEquals(Server.instance.logoutUser(GSON.toJson(new TokenDto(""))),
                 GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.WRONG_TOKEN))));
-        assertEquals(Server.instance.logoutDoctor(GSON.toJson(new TokenDto(UUID.randomUUID().toString()))),
+        assertEquals(Server.instance.logoutUser(GSON.toJson(new TokenDto(UUID.randomUUID().toString()))),
                 GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.SESSION_NOT_FOUND))));
-        assertEquals(Server.instance.logoutDoctor(response), response);
+        assertEquals(Server.instance.logoutUser(response), response);
 
-        assertEquals(Server.instance.logoutDoctor(response),
+        assertEquals(Server.instance.logoutUser(response),
                 GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.SESSION_NOT_FOUND))));
 
-        LoginUserDtoRequest request = new LoginUserDtoRequest("MA.666@gmail.com", "654321");
-        response = Server.instance.loginDoctor(GSON.toJson(request));
+        LoginUserDtoRequest request = new LoginUserDtoRequest("MA.666@gmail.com", "000");
+        assertEquals(Server.instance.loginUser(GSON.toJson(request)),
+                GSON.toJson(new ErrorDtoResponse(new ServerException(ErrorCode.WRONG_PASSWORD))));
+
+        request = new LoginUserDtoRequest("MA.666@gmail.com", "654321");
+        response = Server.instance.loginUser(GSON.toJson(request));
         TokenDto tokenDto = Service.getObjectFromJson(response, TokenDto.class);
         assertTrue(tokenDto.getToken().matches(UUID_PATTERN));
     }
