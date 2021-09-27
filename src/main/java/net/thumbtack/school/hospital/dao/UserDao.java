@@ -1,8 +1,7 @@
 package net.thumbtack.school.hospital.dao;
 
+import net.thumbtack.school.hospital.exception.ServerException;
 import net.thumbtack.school.hospital.model.User;
-
-import java.rmi.ServerException;
 
 public interface UserDao {
 

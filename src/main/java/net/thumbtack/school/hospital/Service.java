@@ -2,14 +2,13 @@ package net.thumbtack.school.hospital;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import net.thumbtack.school.hospital.model.ErrorCode;
-
-import java.rmi.ServerException;
+import net.thumbtack.school.hospital.exception.ErrorCode;
+import net.thumbtack.school.hospital.exception.ServerException;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /*
-    Утилитарный класс, для повторяющихся методов
+    Утилитный класс, для повторяющихся методов
  */
 public class Service {
 

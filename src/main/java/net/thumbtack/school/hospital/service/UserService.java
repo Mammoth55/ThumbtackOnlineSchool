@@ -7,15 +7,10 @@ import net.thumbtack.school.hospital.daoimpl.UserDaoImpl;
 import net.thumbtack.school.hospital.dto.request.LoginUserDtoRequest;
 import net.thumbtack.school.hospital.dto.response.ErrorDtoResponse;
 import net.thumbtack.school.hospital.dto.response.TokenDto;
+import net.thumbtack.school.hospital.exception.ServerException;
 import net.thumbtack.school.hospital.mapper.UserMapperFromLogin;
-import net.thumbtack.school.hospital.model.ErrorCode;
+import net.thumbtack.school.hospital.exception.ErrorCode;
 import net.thumbtack.school.hospital.model.User;
-
-// REVU это еще зачем ? Сделайте свой класс исключения ServerException и в нем ServerErrorCode как enum
-// Этот совсем для других целей
-// См. Задание 8
-
-import java.rmi.ServerException;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -27,19 +22,6 @@ public class UserService {
     private static final String LOGIN_PATTERN = "[а-яёА-ЯЁa-zA-Z0-9@\\.]+";
 
     private final UserDao userDao = new UserDaoImpl();
-
-    // REVU private и в конец класса его, пусть не мешает читать основное
-    public static void validateLoginUserDtoRequest(LoginUserDtoRequest dto) throws ServerException {
-        if (dto == null) {
-            throw new ServerException(ErrorCode.WRONG_REQUEST);
-        }
-        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(LOGIN_PATTERN)) {
-            throw new ServerException(ErrorCode.WRONG_LOGIN);
-        }
-        if (isBlank(dto.getPassword())) {
-            throw new ServerException(ErrorCode.WRONG_PASSWORD);
-        }
-    }
 
     public String login(String requestJsonString) {
         try {
@@ -65,6 +47,18 @@ public class UserService {
             return GSON.toJson(new TokenDto(token));
         } catch (ServerException e) {
             return GSON.toJson(new ErrorDtoResponse(e));
+        }
+    }
+
+    private static void validateLoginUserDtoRequest(LoginUserDtoRequest dto) throws ServerException {
+        if (dto == null) {
+            throw new ServerException(ErrorCode.WRONG_REQUEST);
+        }
+        if (isBlank(dto.getLogin()) || ! dto.getLogin().matches(LOGIN_PATTERN)) {
+            throw new ServerException(ErrorCode.WRONG_LOGIN);
+        }
+        if (isBlank(dto.getPassword())) {
+            throw new ServerException(ErrorCode.WRONG_PASSWORD);
         }
     }
 }

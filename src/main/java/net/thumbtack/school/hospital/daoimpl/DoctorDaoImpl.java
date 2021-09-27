@@ -2,9 +2,8 @@ package net.thumbtack.school.hospital.daoimpl;
 
 import net.thumbtack.school.hospital.dao.DoctorDao;
 import net.thumbtack.school.hospital.database.Database;
+import net.thumbtack.school.hospital.exception.ServerException;
 import net.thumbtack.school.hospital.model.Doctor;
-
-import java.rmi.ServerException;
 
 public class DoctorDaoImpl implements DoctorDao {
 

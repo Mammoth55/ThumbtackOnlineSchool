@@ -19,9 +19,9 @@ public class Medicament implements Assignment {
         return name;
     }
 
-    // REVU зачем нужен метод, который всегда возвращает true ?
     @Override
     public boolean use() {
+        // Заглушка временная, реализация приема медикамента
         return true;
     }
 }

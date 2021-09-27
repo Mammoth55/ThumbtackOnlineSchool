@@ -1,13 +1,14 @@
 package net.thumbtack.school.hospital.model;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
+@Data
 @NoArgsConstructor
 public class Patient extends User {
 
@@ -20,19 +21,5 @@ public class Patient extends User {
         this.disease = disease;
         this.doctor = doctor;
         this.allocations = new ArrayList<>();
-    }
-
-    // REVU а где hashCode ? Вы сами писали equals ?
-    // https://projectlombok.org/features/EqualsAndHashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Patient patient = (Patient) o;
-        return disease.equals(patient.disease)
-                && getLastName().equals(patient.getLastName())
-                && getFirstName().equals(patient.getFirstName())
-                && getLogin().equals(patient.getLogin())
-                && getPassword().equals(patient.getPassword());
     }
 }

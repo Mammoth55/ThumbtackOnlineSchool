@@ -5,10 +5,10 @@ import net.thumbtack.school.hospital.dto.request.LoginUserDtoRequest;
 import net.thumbtack.school.hospital.dto.request.RegisterDoctorDtoRequest;
 import net.thumbtack.school.hospital.dto.response.ErrorDtoResponse;
 import net.thumbtack.school.hospital.dto.response.TokenDto;
-import net.thumbtack.school.hospital.model.ErrorCode;
+import net.thumbtack.school.hospital.exception.ErrorCode;
+import net.thumbtack.school.hospital.exception.ServerException;
 import org.junit.Test;
 
-import java.rmi.ServerException;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -38,40 +38,40 @@ public class TestServer {
                 "LI666@gmail.com", "666000666");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         ErrorDtoResponse errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.USER_ALREADY_EXIST);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.USER_ALREADY_EXIST.getDescription());
 
         request = new RegisterDoctorDtoRequest();
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LASTNAME);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LASTNAME.getDescription());
 
         request = new RegisterDoctorDtoRequest("0", "\t", " ",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_FIRSTNAME);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_FIRSTNAME.getDescription());
 
         request = new RegisterDoctorDtoRequest("0", "0", "",
                 " 0 ", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_SPECIALITY);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_SPECIALITY.getDescription());
 
         request = new RegisterDoctorDtoRequest("0", "0", "0",
                 "\r", "0");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LOGIN);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_LOGIN.getDescription());
 
         request = new RegisterDoctorDtoRequest("0", "0", "0",
                 "0@0.0", "\n");
         response = Server.instance.registerDoctor(GSON.toJson(request));
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_PASSWORD);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_PASSWORD.getDescription());
 
         response = Server.instance.registerDoctor("");
         errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
-        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_JSON);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.WRONG_JSON.getDescription());
     }
 
     @Test
@@ -99,5 +99,9 @@ public class TestServer {
         response = Server.instance.loginUser(GSON.toJson(request));
         TokenDto tokenDto = Service.getObjectFromJson(response, TokenDto.class);
         assertTrue(tokenDto.getToken().matches(UUID_PATTERN));
+
+        response = Server.instance.loginUser(GSON.toJson(request));
+        ErrorDtoResponse errorDtoResponse = Service.getObjectFromJson(response, ErrorDtoResponse.class);
+        assertEquals(errorDtoResponse.getDescription(), ErrorCode.USER_ALREADY_LOGIN.getDescription());
     }
 }

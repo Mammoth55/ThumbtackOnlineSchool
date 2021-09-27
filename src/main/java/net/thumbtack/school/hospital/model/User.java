@@ -1,21 +1,14 @@
 package net.thumbtack.school.hospital.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-// REVU abstract ?
-public class User {
+public class User {    // НЕ абстрактный, т.к. при реализации маппера требуется создавать инстанс
 
     private String lastName;
     private String firstName;
     private String login;
     private String password;
-    // REVU https://projectlombok.org/features/EqualsAndHashCode
-    
 }
