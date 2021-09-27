@@ -9,10 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+// REVU abstract ?
 public class User {
 
     private String lastName;
     private String firstName;
     private String login;
     private String password;
+    // REVU https://projectlombok.org/features/EqualsAndHashCode
+    
 }

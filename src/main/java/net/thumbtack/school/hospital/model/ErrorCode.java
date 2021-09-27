@@ -1,5 +1,10 @@
 package net.thumbtack.school.hospital.model;
 
+// REVU это не класс модели. 
+// Перенесите в net.thumbtack.school.hospital.exceptions
+// и вместо строк сделайте enum 
+// См. Задание 8. Я Вам его открыл
+// https://drive.google.com/drive/folders/1EgF78StMS6lr_IMQXu9-LAkKnrTjw8MO?usp=sharing
 public abstract class ErrorCode {
 
     public static final String WRONG_JSON = "Некорректный формат JSON";

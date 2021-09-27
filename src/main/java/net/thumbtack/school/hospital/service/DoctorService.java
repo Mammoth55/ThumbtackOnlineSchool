@@ -24,7 +24,8 @@ public class DoctorService {
 
     private final DoctorDao doctorDao = new DoctorDaoImpl();
 
-    public static void validateRegisterDoctorDtoRequest(RegisterDoctorDtoRequest dto) throws ServerException {
+    // REVU private и в конец класса его, пусть не мешает читать основное
+   public static void validateRegisterDoctorDtoRequest(RegisterDoctorDtoRequest dto) throws ServerException {
         if (dto == null) {
             throw new ServerException(ErrorCode.WRONG_REQUEST);
         }

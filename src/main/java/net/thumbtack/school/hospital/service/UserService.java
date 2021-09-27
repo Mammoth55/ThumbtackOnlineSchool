@@ -11,6 +11,10 @@ import net.thumbtack.school.hospital.mapper.UserMapperFromLogin;
 import net.thumbtack.school.hospital.model.ErrorCode;
 import net.thumbtack.school.hospital.model.User;
 
+// REVU это еще зачем ? Сделайте свой класс исключения ServerException и в нем ServerErrorCode как enum
+// Этот совсем для других целей
+// См. Задание 8
+
 import java.rmi.ServerException;
 import java.util.UUID;
 
@@ -24,6 +28,7 @@ public class UserService {
 
     private final UserDao userDao = new UserDaoImpl();
 
+    // REVU private и в конец класса его, пусть не мешает читать основное
     public static void validateLoginUserDtoRequest(LoginUserDtoRequest dto) throws ServerException {
         if (dto == null) {
             throw new ServerException(ErrorCode.WRONG_REQUEST);

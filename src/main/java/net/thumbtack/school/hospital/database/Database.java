@@ -41,6 +41,11 @@ public class Database {
     }
 
     public void login(User user, String token) throws ServerException {
+    	// REVU а если он уже залогинен ?
+    	// получится 2 токена на него
+    	// https://commons.apache.org/proper/commons-collections/javadocs/api-4.4/org/apache/commons/collections4/BidiMap.html
+    	// это Map с двух сторон. Используйте его дляч tokens
+    	// и можно будет проверить
         User userFromDB = users.get(user.getLogin());
         if (userFromDB == null) {
             throw new ServerException(ErrorCode.USER_NOT_FOUND);

@@ -23,7 +23,9 @@ public class Doctor extends User {
         this.allocations = new ArrayList<>();
     }
 
-    @Override
+    // REVU а где hashCode ? Вы сами писали equals ?
+    // https://projectlombok.org/features/EqualsAndHashCode
+   @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

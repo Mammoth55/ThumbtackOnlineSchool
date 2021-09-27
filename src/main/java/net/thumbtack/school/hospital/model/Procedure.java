@@ -24,6 +24,7 @@ public class Procedure implements Assignment {
         return name;
     }
 
+    // REVU зачем нужен метод, который всегда возвращает true ?
     @Override
     public boolean use() {
         return true;
